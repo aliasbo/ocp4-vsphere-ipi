@@ -1,0 +1,61 @@
+---
+# vars file for vsphere-ipi
+
+# Default openshift-install version
+openshift_version: stable
+
+# Default install-config values
+workers: 3
+#worker_spec: {}
+#master_spec: {}
+pod_cidr: '10.128.0.0/14'
+service_cidr: '172.30.0.0/16'
+#machine_cidr: '10.0.0.0/16'
+
+# Cluster
+cluster_domain: "{{ cluster_name }}.{{ base_domain }}"
+api_fqdn: "api.{{ cluster_name }}.{{ base_domain }}"
+apps_fqdn: "wildcard.apps.{{ cluster_name }}.{{ base_domain }}"
+
+# OpenShift artifacts
+openshift_install_linux: "openshift-install-linux.tar.gz"
+openshift_client_linux: "openshift-client-linux.tar.gz"
+
+# install-config secrets
+# vCenter Password
+vcenter_password: "{{ vault_vcenter_password }}"
+# Pull Secret                 
+pull_secret: "{{ vault_pull_secret }}"
+
+# Utilities
+govc_version: 'v0.25.0'
+
+# Packages
+common_packages:
+  - python3
+  - python3-pip
+  - python3-dns
+  - bash-completion
+  - wget
+  - curl
+  - lsof
+  - telnet
+  - rsync
+  - unzip
+  - git
+  - tree
+  - jq
+rpm_packages:
+  - bind-utils
+  - nmap-ncat
+  - nmap
+  - vim-enhanced
+deb_packages:
+  - bind9-dnsutils
+  - nmap
+  - nmap-common
+  - ncat
+  - vim
+pip_packages:
+  - pyvim
+  - pyvmomi

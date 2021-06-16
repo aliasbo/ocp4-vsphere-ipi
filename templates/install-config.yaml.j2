@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+baseDomain: {{ base_domain }}
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  replicas: {{ workers }}
+{% if worker_spec is defined %}
+  platform:
+    vsphere:
+{% if worker_spec.cpus is defined %}
+      cpus: {{ worker_spec.cpus }}
+{% endif %}
+{% if worker_spec.memoryMB is defined %}
+      memoryMB: {{ worker_spec.memoryMB }}
+{% endif %}
+{% if worker_spec.diskSizeGB is defined %}
+      osDisk:
+        diskSizeGB: {{ worker_spec.diskSizeGB }}
+{% endif %}
+{%- else %}   
+  platform: {}
+{% endif %}
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+{% if master_spec is defined %}
+  platform:
+    vsphere:
+{% if master_spec.cpus is defined %}
+      cpus: {{ master_spec.cpus }}
+{% endif %}
+{% if master_spec.memoryMB is defined %}
+      memoryMB: {{ master_spec.memoryMB }}
+{% endif %}
+{% if master_spec.diskSizeGB is defined %}
+      osDisk:
+        diskSizeGB: {{ master_spec.diskSizeGB }}
+{% endif %}
+{%- else %}   
+  platform: {}
+{% endif %}
+metadata:
+  creationTimestamp: null
+  name: {{ cluster_name }}
+networking:
+  clusterNetwork:
+  - cidr: {{ pod_cidr }}
+    hostPrefix: 23
+{% if machine_cidr is defined %}
+  machineNetwork:
+  - cidr: {{ machine_cidr }}
+{% endif %}
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - {{ service_cidr }}
+{% if proxy_http is defined %}
+proxy:
+  httpProxy: http://{{ proxy_http }}
+  httpsProxy: http://{{ proxy_http }}
+  noProxy: {{ no_proxy_http }}
+{% endif %}
+platform:
+  vsphere:
+    apiVIP: {{ api_ip }}
+    cluster: {{ vcenter_cluster }}
+    datacenter: {{ vcenter_datacenter }}
+    defaultDatastore: {{ vcenter_datastore }}
+    ingressVIP: {{ apps_ip }}
+    network: {{ vcenter_network }}
+    password: {{ vcenter_password }}
+    username: {{ vcenter_username }}
+    vCenter: {{ vcenter_ip }}
+publish: External
+pullSecret: '{{ pull_secret | to_json }}'
+sshKey: |
+  {{ ssh_pub_key }}

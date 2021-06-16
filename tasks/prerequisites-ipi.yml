@@ -1,0 +1,109 @@
+---
+- name: Create cluster directory
+  file:
+    path: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
+    state: directory
+    force: yes
+
+- name: Validate NTP
+  command: nmap -sU -p 123 --script ntp-info {{ ntp_ip }}
+  become: yes
+  register: result_ntp
+  failed_when: "'ntp-info' not in result_ntp.stdout"
+  changed_when: False
+
+- name: Validate DHCP
+  command: nmap --script broadcast-dhcp-discover
+  become: yes
+  register: result_dhcp
+  failed_when: "'DHCPOFFER' not in result_dhcp.stdout"
+  changed_when: False
+
+- name: Obtaining IP of {{ api_fqdn }}
+  set_fact:
+    ip_api: "{{ lookup('dig', api_fqdn )}}"
+
+- name: Check if {{ api_fqdn }}  resolves to {{ api_ip }}
+  fail:
+    msg: "The IPv4 address for {{ api_fqdn }} is {{ ip_api }}"
+  when: api_ip != ip_api
+
+- name: Obtaining IP of {{ apps_fqdn }}
+  set_fact:
+    ip_apps: "{{ lookup('dig', apps_fqdn )}}"
+
+- name: Check if {{ apps_fqdn }} resolves to {{ apps_ip }}
+  fail:
+    msg: "The IPv4 address for {{ apps_fqdn }} is {{ ip_apps }}"
+  when: apps_ip != ip_apps
+
+- name: Obtain the vCenter certificates
+  unarchive:
+    src: https://{{ vcenter_ip }}/certs/download.zip
+    dest: /home/{{ ansible_env.USER }}/openshift/
+    remote_src: yes
+    validate_certs: false
+
+- name: Copy the vCenter certificates to Ubuntu system trust
+  when: ansible_facts['distribution'] == "Ubuntu"
+  become: yes
+  shell: |
+    for cert in /home/{{ ansible_env.USER }}/openshift/certs/lin/*
+    do
+      cp $cert /usr/local/share/ca-certificates/${cert##*/}.crt
+    done
+
+- name: Update the Ubuntu certificates system trust
+  when: ansible_facts['distribution'] == "Ubuntu"
+  become: yes
+  command: update-ca-certificates
+  register: update_ca_result
+  changed_when: "'0 added' not in update_ca_result.stdout"
+
+- name: Copy the vCenter certificates to RHEL system trust
+  when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+  become: yes
+  shell: |
+    cp /home/{{ ansible_env.USER }}/openshift/certs/lin/* /etc/pki/ca-trust/source/anchors/
+
+- name: Update the RHEL certificates system trust
+  when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+  become: yes
+  command: update-ca-trust extract
+  register: update_ca_result
+  changed_when: "'0 added' not in update_ca_result.stdout"
+
+- name: Confirm datacenter in vCenter is {{ vcenter_datacenter }}
+  community.vmware.vmware_datacenter_info:
+    hostname: '{{ vcenter_ip }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+  register: r_vcenter
+  failed_when: vcenter_datacenter not in (r_vcenter.datacenter_info | json_query('[*].name'))
+
+- name: Confirm cluster in vCenter is {{ vcenter_cluster }}
+  community.vmware.vmware_cluster_info:
+    hostname: '{{ vcenter_ip }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vcenter_datacenter }}'
+  register: r_vcenter
+  failed_when: vcenter_cluster not in (r_vcenter.clusters | json_query('keys(@)'))
+
+- name: Confirm datastore in vCenter is {{ vcenter_datastore }}
+  community.vmware.vmware_datastore_info:
+    hostname: '{{ vcenter_ip }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vcenter_datacenter }}'
+  register: r_vcenter
+  failed_when: vcenter_datastore not in (r_vcenter.datastores | json_query('[*].name'))
+
+- name: Confirm PortGroup in vCenter is {{ vcenter_network }}
+  community.vmware.vmware_portgroup_info:
+    hostname: '{{ vcenter_ip }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    cluster_name: '{{ vcenter_cluster }}'
+  register: r_vcenter
+  failed_when: vcenter_network not in (r_vcenter.hosts_portgroup_info | json_query('*[*].portgroup | []'))

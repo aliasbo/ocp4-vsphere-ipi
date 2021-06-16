@@ -1,0 +1,59 @@
+---
+- name: Installation and getting the logs
+  tags:
+  - run_installer
+  block:
+  - name: Run the installer
+    command: openshift-install create cluster --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
+    async: "{{ 2 * 60 * 60 }}"
+    poll: 15
+    register: r_openshift_install
+
+  rescue:
+  - name: Run destroy to reset before retry
+    become: false
+    command: openshift-install destroy cluster --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
+
+  - name: Pause briefly for cloud provider cleanup to finish
+    pause:
+      minutes: 2
+
+  - name: Restore install config from backup copy
+    copy:
+      remote_src: true
+      src: /home/{{ ansible_env.USER }}/openshift/install-config.yaml.bak
+      dest: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/install-config.yaml
+
+  - name: Retry the installer
+    command: openshift-install create cluster --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
+    async: "{{ 2 * 60 * 60 }}"
+    poll: 15
+    register: r_openshift_install
+
+  - name: View the log
+    debug:
+      msg: "Check the log at /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/.openshift_install.log"
+    when: r_openshift_install is failed
+
+  always:
+  - name: Gzip Install log
+    archive:
+      path: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/.openshift_install.log
+      dest: /home/{{ ansible_env.USER }}/openshift/openshift_install.log.gz
+      format: gz
+
+- name: Make sure .kube directory exists in home directory
+  file:
+    state: directory
+    path: /home/{{ ansible_env.USER }}/.kube
+    owner: "{{ ansible_env.USER }}"
+    mode: 0775
+
+- name: Set up .kube/config
+  copy:
+    src: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/auth/kubeconfig
+    dest: /home/{{ ansible_env.USER }}/.kube/config
+
+- name: Create OpenShift Bash completion file
+  become: true
+  shell: oc completion bash >/etc/bash_completion.d/openshift

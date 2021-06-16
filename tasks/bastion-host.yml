@@ -1,0 +1,54 @@
+---
+- name: Add EPEL to CentOS
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_facts['distribution'] == "CentOS"
+
+- name: Install common Packages
+  package:
+    name: "{{ common_packages }}"
+    state: present
+
+- name: Install RHEL Packages
+  yum:
+    name: "{{ rpm_packages }}"
+    state: present
+  when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+
+- name: Install Ubuntu Packages
+  apt:
+    name: "{{ deb_packages }}"
+    state: present
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: Install PIP packages
+  pip:
+    name: "{{ pip_packages }}"
+
+- name: Check if govc already exists
+  command: which govc
+  register: r_which
+  ignore_errors: yes
+
+- name: Get govc
+  block:
+  - name: Download govc
+    get_url:
+      url: 'https://github.com/vmware/govmomi/releases/download/{{ govc_version }}/govd_Linux_x86_64.tar.gz'
+      dest: /tmp/govc_Linux_x86_64.tar.gz
+
+  - name: Install govc
+    unarchive:
+      src: /tmp/govc_Linux_x86_64.tar.gz
+      dest: /usr/local/bin
+      extra_opts:
+      - "--add-file"
+      - "govc"
+  when: r_which is failed
+
+- name: Create the vimrc file
+  copy:
+    content: "autocmd FileType yaml setlocal ai et nu cuc st=2 sts=2 sw=2"
+    dest: "/home/{{ ansible_env.USER }}/.vimrc"
+  become: no
