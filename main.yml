@@ -10,7 +10,7 @@
     become: yes
 
   - name: Tasks to validate the prerequisites
- e   import_tasks: tasks/prerequisites-ipi.yml
+    import_tasks: tasks/prerequisites-ipi.yml
 
   - name: Tasks to generate install_config.yaml
     import_tasks: tasks/generate-install-config.yml
