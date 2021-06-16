@@ -73,7 +73,7 @@ platform:
     network: {{ vcenter_network }}
     password: {{ vcenter_password }}
     username: {{ vcenter_username }}
-    vCenter: {{ vcenter_ip }}
+    vCenter: {{ vcenter_hostname }}
 publish: External
 pullSecret: '{{ pull_secret | to_json }}'
 sshKey: |
