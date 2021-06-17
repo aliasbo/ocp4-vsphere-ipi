@@ -41,7 +41,7 @@ all:
 #    proxy_http: '192.168.1.1:3128'
 #    no_proxy_http: 'example.com'
 ##### vCenter access details
-    vcenter_ip: <'192.168.22.10'>
+    vcenter_hostname: <'192.168.22.10'>
     vcenter_username: <'administrator@vsphere.local'>
     vcenter_datacenter: <Datacenter>
     vcenter_cluster: <Cluster>
