@@ -30,14 +30,14 @@ cd GIT-REPO-DIR
 
 The file `vault` will store the Pull Secret and the password for vCenter.
 
-> Download the pull_secret from https://cloud.redhat.com
+Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site and save it to
 
-Move the pull_secret file to your current path within the clode repo dir.
+Move the pull-secret file to your current path.
 
 Create the vault file with the content of the pull_secret.
 
 ```shell
-echo "vault_pull_secret: $(< pull_secret)" > host_vars/localhost/vault
+echo "vault_pull_secret: $(< pull-secret)" > host_vars/localhost/vault
 ```
 
 Save the vCenter password to a file called `vcenter_password`.
