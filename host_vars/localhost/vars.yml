@@ -2,7 +2,7 @@
 # vars file for vsphere-ipi
 
 # Default openshift-install version
-openshift_version: stable
+#openshift_version: stable
 
 # Default install-config values
 workers: 3

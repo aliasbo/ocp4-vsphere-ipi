@@ -5,8 +5,8 @@ all:
   hosts:
     localhost:
   vars:
-##### OpenShift version. The default value is 'stable' (latest)
-#    openshift_version: '4.7.7'
+##### OpenShift version. The default value is 'stable' or dotted version '4.7.7' (latest)
+    openshift_version: 'stable'
 ##### Number of worker nodes
 #    workers: 3
 ##### Spec for the worker nodes
