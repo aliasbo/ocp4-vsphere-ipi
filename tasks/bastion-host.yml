@@ -38,7 +38,7 @@
       url: 'https://github.com/vmware/govmomi/releases/download/{{ govc_version }}/govd_Linux_x86_64.tar.gz'
       dest: /tmp/govc_Linux_x86_64.tar.gz
 
-  - name: Install govc
+- name: Install govc
     unarchive:
       src: /tmp/govc_Linux_x86_64.tar.gz
       dest: /usr/local/bin
