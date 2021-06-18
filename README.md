@@ -17,13 +17,13 @@ The execution has this workflow:
 Clone the repo.
 
 ```shell
-git clone https://gitlab.consulting.redhat.com/stp-latam/openshift/vsphere-ipi-install.git
+git clone https://GIT-REPO.git
 ```
 
 Change to the repo directory
 
 ```shell
-cd vsphere-ipi-install
+cd GIT-REPO-DIR
 ```
 
 ## Create a vault file

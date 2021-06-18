@@ -5,42 +5,38 @@
   poll: 0
   register: r_openshift_install
 
-- name: Pause waiting for the bootstrap VM to be created
+- name: Pause while the resources are created
   pause:
     minutes: 2
 
-- name: Obtain InfraID of the cluster
+- name: Composing the name of bootstrap VM using InfraID
   set_fact:
-    infra_id: "{{ lookup('file','/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/metadata.json') | from_json | json_query('infraID') }}"
+    bootstrap_name: "{{ lookup('file','/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/metadata.json') | from_json | json_query('infraID') }}-bootstrap"
 
-- name: Get information about vCenter folders
-  community.vmware.vmware_folder_info:
+- name: Wait for the bootstrap VM {{ bootstrap_name }} to be created
+  community.vmware.vmware_vm_info:
     hostname: '{{ vcenter_hostname }}'
     username: '{{ vcenter_username }}'
     password: '{{ vcenter_password }}'
-    datacenter: Datacenter
-  delegate_to: localhost
-  register: r_vcenter_folder_info
-
-- name: Set the vCenter folder of the cluster
-  set_fact:
-    vcenter_folder: "{{ r_vcenter_folder_info | to_json | from_json | json_query(query_str) | last }}"
+    vm_type: vm
+  register: vm_info
+  until: vm_info.virtual_machines | to_json | from_json | json_query(query)
   vars:
-    query_str: "flat_folder_info[?contains(path,'vm') && contains(path,'{{ infra_id }}')].path"
+    query: "[?guest_name=='{{ bootstrap_name }}']"
 
-- name: Wait for the bootstrap VM to become available
-  community.vmware.vmware_guest_tools_wait:
+- name: Wait for the IP of the bootstrap VM {{ bootstrap_name }}
+  community.vmware.vmware_guest_info:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    name: "{{ infra_id }}-bootstrap"
-    folder: "{{ vcenter_folder }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ bootstrap_name }}"
   register: r_vm_guest
   until: r_vm_guest.instance.ipv4
-  retries: 5
-  delay: 60
+  retries: 6
+  delay: 30
 
-- name: Set the bootstrap_ip
+- name: Set the bootstrap_ip to {{ r_vm_guest.instance.ipv4 }}
   set_fact:
     bootstrap_ip: "{{ r_vm_guest.instance.ipv4 }}"
 
@@ -70,9 +66,9 @@
     executable: /bin/bash
   ignore_errors: true
 
-- name: Bootstrap accesible at {{ bootstrap_ip }}
+- name: For close inspection of the bootstrap process
   debug:
-    msg: "Watch the status running > journalctl -b -f -u release-image.service -u bootkube.service"
+    msg: "SSH into {{ bootstrap_name }} then run > journalctl -b -f -u release-image.service -u bootkube.service"
 
 - name: Wait for bootstrap-complete
   command: |
