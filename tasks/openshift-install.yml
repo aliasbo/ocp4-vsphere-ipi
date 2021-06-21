@@ -70,17 +70,29 @@
   debug:
     msg: "SSH into {{ bootstrap_name }} then run > journalctl -b -f -u release-image.service -u bootkube.service"
 
-- name: Wait for bootstrap-complete
-  command: |
-    openshift-install wait-for bootstrap-complete --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
-  async: "{{ 2 * 60 * 60 }}"
-  poll: 15 
+- set_fact:
+    wait_type: bootstrap
 
-- name: Wait for install-complete
-  command: |
-    openshift-install wait-for install-complete --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
-  async: "{{ 2 * 60 * 60 }}"
-  poll: 15 
+- name: Call wait for bootstrap
+  include_tasks: ./wait-for.yml
+  register: job_result_boot
+  with_sequence: start=0 end=7
+
+- name: debug bootstrap result
+  debug:
+    msg: "{{ job_result_boot }}"
+
+- set_fact:
+    wait_type: install
+
+- name: Call wait for install
+  include_tasks: ./wait-for.yml
+  register: job_result_install
+  with_sequence: start=0 end=7
+
+- name: debug install result
+  debug:
+    msg: "{{ job_result_install }}"
 
 - name: Gzip Install log
   archive:
