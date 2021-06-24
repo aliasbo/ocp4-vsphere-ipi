@@ -40,6 +40,17 @@ all:
 ##### IP address and port of the Proxy
 #    proxy_http: '192.168.1.1:3128'
 #    no_proxy_http: 'example.com'
+##### For Disconnected installation
+#####> Add the imageContentSources obtained from the 'oc adm release mirror'
+#    imageContentSources:
+#    - mirrors:
+#      - mirror.registry.com:5000/ocp4/openshift4
+#      source: quay.io/openshift-release-dev/ocp-release
+#    - mirrors:
+#      - mirror.registry.com:5000/ocp4/openshift4
+#      source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+#####> Add the certificate of the mirror registry
+#    mirror_certificate: '<certificate>'
 ##### vCenter access details
     vcenter_hostname: <'192.168.22.10'>
     vcenter_username: <'administrator@vsphere.local'>
