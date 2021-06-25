@@ -5,18 +5,18 @@
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   tasks:
-  - name: Tasks to prepare the bastion server
-    import_tasks: tasks/bastion-host.yml 
-    become: yes
-
-  - name: Tasks to validate the prerequisites
-    import_tasks: tasks/prerequisites-ipi.yml
+#  - name: Tasks to prepare the bastion server
+#    import_tasks: tasks/bastion-host.yml 
+#    become: yes
+#
+#  - name: Tasks to validate the prerequisites
+#    import_tasks: tasks/prerequisites-ipi.yml
 
   - name: Tasks to generate install_config.yaml
     import_tasks: tasks/generate-install-config.yml
 
-  - name: Tasks to create the OpenShift cluster
-    import_tasks: tasks/openshift-install.yml
-
-  - name: Tasks to print the cluster connection info
-    import_tasks: tasks/print-cluster-info.yml
+#  - name: Tasks to create the OpenShift cluster
+#    import_tasks: tasks/openshift-install.yml
+#
+#  - name: Tasks to print the cluster connection info
+#    import_tasks: tasks/print-cluster-info.yml

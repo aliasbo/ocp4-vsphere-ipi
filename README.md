@@ -34,7 +34,7 @@ Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/op
 
 Move the pull-secret file to your current path.
 
-Create the vault file with the content of the pull_secret.
+Create the vault file with the content of the pull-secret.
 
 ```shell
 echo "vault_pull_secret: $(< pull-secret)" > host_vars/localhost/vault
@@ -48,12 +48,18 @@ Add the content of the password file to the vault file.
 echo "vault_vcenter_password: $(< vcenter_password)" >>  host_vars/localhost/vault
 ```
 
-Create `.vault_pass` to store the vault password.
+In case of an installation from a local registry mirror. Add the content of the mirror pullsecret.
 
 ```shell
-echo "vault_password" > .vault_pass
-
+echo "vault_mirror_pullsecret: $(< mirror-pullsecret)" >> host_vars/localhost/vault
 ```
+
+Create `.vault_pass` to store the vault password of your choice.
+
+```shell
+echo "secret_password" > .vault_pass
+```
+
 Encrypt the file. Ansible will look for `.vault_pass` at the main dir of the repository.
 
 ```shell
@@ -71,38 +77,13 @@ ansible-vault view host_vars/localhost/vault
 Create a copy of the reference inventory file into `inventory`.
 
 ```shell
-cp inventory_reference.yml inventory/openshift_cluster.yml
+cp inventory_reference.yml inventory/<cluster_name>.yml
 ```
 
 Edit the new file to set the value of the required objects. The commented objects are optional.
 
 ```shell
-vim inventory/ocp_cluster.yml
-```
-```yaml
-all:
-  hosts:
-    localhost:
-  vars:
-##### Name of the cluster
-    cluster_name: <ocp4>
-##### dns domain for the cluster
-    base_domain: <example.com>
-##### IP assigned to the DNS record api.<cluster_name>.<base_domain>
-    api_ip: <'192.168.1.8'>
-##### IP assigned to the DNS record *.<cluster_name>.<base_domain>
-    apps_ip: <'192.168.1.9'>
-##### IP address of the NTP server
-    ntp_ip: <'192.168.1.1'>
-##### IP address of the DNS server
-    dns_ip: <'192.168.1.1'>
-##### vCenter access details
-    vcenter_ip: <'192.168.22.10'>
-    vcenter_username: <'administrator@vsphere.local'>
-    vcenter_datacenter: <Datacenter>
-    vcenter_cluster: <Cluster>
-    vcenter_datastore: <Datastore>
-    vcenter_network: <NetworkName>
+vim inventory/<cluster_name>.yml
 ```
 
 Run the `main.yaml` playbook using the previous inventory.

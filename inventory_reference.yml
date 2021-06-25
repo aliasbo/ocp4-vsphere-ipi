@@ -6,25 +6,25 @@ all:
     localhost:
   vars:
 ##### OpenShift version. The default value is 'stable' or dotted version '4.7.7' (latest)
-    openshift_version: 'stable'
+    openshift_ver: 'stable'
 ##### Number of worker nodes
-#    workers: 3
+#    workers_num: 3
 ##### Spec for the worker nodes
-#    worker_spec:
+#    worker_detail:
 #      cpus: 2
 #      memoryMB: 8196
 #      diskSizeGB: 120
 ##### Spec for the master nodes
-#    master_spec:
+#    master_detail:
 #      cpus: 2
 #      memoryMB: 8196
 #      diskSizeGB: 120
 ##### IP address block for pods
-#    pod_cidr: '10.128.0.0/14'
+#    pod_sdn_cidr: '10.128.0.0/14'
 ##### IP address block for pods
-#    service_cidr: '172.30.0.0/16'
+#    service_sdn_cidr: '172.30.0.0/16'
 ##### NECESSARY WHEN USING PROXY. IP address block for machines
-#    machine_cidr: '10.0.0.0/16'
+#    machine_net_cidr: '10.0.0.0/16'
 ##### Name of the cluster
     cluster_name: <ocp4>
 ##### Parent DNS domain for the cluster
@@ -37,9 +37,6 @@ all:
     ntp_ip: <'192.168.1.1'>
 ##### IP address of the DNS server
     dns_ip: <'192.168.1.1'>
-##### IP address and port of the Proxy
-#    proxy_http: '192.168.1.1:3128'
-#    no_proxy_http: 'example.com'
 ##### vCenter access details
     vcenter_hostname: <'192.168.22.10'>
     vcenter_username: <'administrator@vsphere.local'>
@@ -47,3 +44,15 @@ all:
     vcenter_cluster: <Cluster>
     vcenter_datastore: <Datastore>
     vcenter_network: <NetworkName>
+##### Internet access through Proxy
+#    proxy_http: <'192.168.1.1:3128'>
+#    no_proxy_http: <'example.com'>
+##### Disconnected Installation Section
+#    mirror_certificate: <'certificate_file'>
+#    mirror_ip_port: <'192.168.1.10:5000'>
+#    mirror_repo_name: <'repo_name'>
+#    mirror_ocp_release: <'ocp_release'>
+## Paste the imageContentSources obtained from the 'oc adm release mirror'
+#    mirror_sources: |
+#      <imageContentSources> 
+

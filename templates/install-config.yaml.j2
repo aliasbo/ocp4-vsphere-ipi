@@ -78,3 +78,8 @@ publish: External
 pullSecret: '{{ pull_secret | to_json }}'
 sshKey: |
   {{ ssh_pub_key }}
+{% if mirror_sources is defined %}
+additionalTrustBundle: | 
+  {{ lookup('file',mirror_certificate) | indent(2,true) }}
+{{ mirror_sources }}
+{% endif %}

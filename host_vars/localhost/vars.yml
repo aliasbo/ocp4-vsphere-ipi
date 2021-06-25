@@ -2,14 +2,12 @@
 # vars file for vsphere-ipi
 
 # Default openshift-install version
-#openshift_version: stable
+openshift_version: "{{ openshift_ver | default('stable') }}"
 
 # Default install-config values
-workers: 3
-#worker_spec: {}
-#master_spec: {}
-pod_cidr: '10.128.0.0/14'
-service_cidr: '172.30.0.0/16'
+workers: "{{ workers_num | default('3') }}"
+pod_cidr: "{{ pod_sdn_cidr | default('10.128.0.0/14') }}"
+service_cidr: "{{ service_sdn_cidr | default('172.30.0.0/16') }}"
 #machine_cidr: '10.0.0.0/16'
 
 # Cluster
@@ -61,3 +59,4 @@ pip_packages:
   - pyvim
   - pyvmomi
   - openshift
+
