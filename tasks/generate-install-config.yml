@@ -8,7 +8,7 @@
 
 - name: Generate SSH keys
   openssh_keypair:
-    path: /home/{{ ansible_env.USER }}/.ssh/id_rsa_ocp
+    path: /home/{{ ansible_env.USER }}/.ssh/id_rsa_ocp_{{ cluster_name }}
   register: r_sshkey
 
 - name: Set ssh_pub_key

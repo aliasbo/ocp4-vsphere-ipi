@@ -78,14 +78,8 @@ publish: External
 pullSecret: '{{ pull_secret | to_json }}'
 sshKey: |
   {{ ssh_pub_key }}
-{% if mirror_registry is defined %}
+{% if mirror_sources is defined %}
 additionalTrustBundle: | 
   {{ mirror_certificate }}
-imageContentSources: 
-- mirrors:
-  - <local_registry>/<local_repository_name>/release
-  source: quay.io/openshift-release-dev/ocp-release
-- mirrors:
-  - <local_registry>/<local_repository_name>/release
-  source: registry.svc.ci.openshift.org/ocp/release
+{{ mirror_sources }}
 {% endif %}
