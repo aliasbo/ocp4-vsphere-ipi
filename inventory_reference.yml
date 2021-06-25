@@ -23,8 +23,6 @@ all:
 #    pod_sdn_cidr: '10.128.0.0/14'
 ##### IP address block for pods
 #    service_sdn_cidr: '172.30.0.0/16'
-##### NECESSARY WHEN USING PROXY. IP address block for machines
-#    machine_net_cidr: '10.0.0.0/16'
 ##### Name of the cluster
     cluster_name: <ocp4>
 ##### Parent DNS domain for the cluster
@@ -47,7 +45,8 @@ all:
 ##### Internet access through Proxy
 #    proxy_http: <'192.168.1.1:3128'>
 #    no_proxy_http: <'example.com'>
-##### Disconnected Installation Section
+#    machine_net_cidr: '10.0.0.0/16'
+##### Disconnected Installation using local registry
 #    mirror_certificate: <'certificate_file'>
 #    mirror_ip_port: <'192.168.1.10:5000'>
 #    mirror_repo_name: <'repo_name'>
@@ -55,4 +54,3 @@ all:
 ## Paste the imageContentSources obtained from the 'oc adm release mirror'
 #    mirror_sources: |
 #      <imageContentSources> 
-

@@ -30,31 +30,33 @@ cd GIT-REPO-DIR
 
 The file `vault` will store the Pull Secret and the password for vCenter.
 
-Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site and save it to
+Create the directory `files` at the current path of the project.
 
-Move the pull-secret file to your current path.
+```shell
+mkdir files
+```
+
+Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site.
+
+Move the pull-secret file to `files/pull-secret` directory.
+
+> In case of an installation from a local registry mirror. The file should have the merged secret from the local registry.
 
 Create the vault file with the content of the pull-secret.
 
 ```shell
-echo "vault_pull_secret: $(< pull-secret)" > host_vars/localhost/vault
+echo "vault_pull_secret: $(< files/pull-secret)" > host_vars/localhost/vault
 ```
 
-Save the vCenter password to a file called `vcenter_password`.
+Save the vCenter password to a file in `files/vcenter_password`.
 
 Add the content of the password file to the vault file.
 
 ```shell
-echo "vault_vcenter_password: $(< vcenter_password)" >>  host_vars/localhost/vault
+echo "vault_vcenter_password: $(< files/vcenter_password)" >>  host_vars/localhost/vault
 ```
 
-In case of an installation from a local registry mirror. Add the content of the mirror pullsecret.
-
-```shell
-echo "vault_mirror_pullsecret: $(< mirror-pullsecret)" >> host_vars/localhost/vault
-```
-
-Create `.vault_pass` to store the vault password of your choice.
+Create `.vault_pass` to store the password of your choice.
 
 ```shell
 echo "secret_password" > .vault_pass
@@ -74,7 +76,13 @@ ansible-vault view host_vars/localhost/vault
 
 ## Create the inventory file
 
-Create a copy of the reference inventory file into `inventory`.
+Create the directory to keep the inventory file.
+
+```shell
+mkdir inventory
+```
+
+Create a copy of the reference inventory file into the created `inventory` directory.
 
 ```shell
 cp inventory_reference.yml inventory/<cluster_name>.yml
