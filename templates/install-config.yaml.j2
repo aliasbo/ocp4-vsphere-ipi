@@ -80,6 +80,6 @@ sshKey: |
   {{ ssh_pub_key }}
 {% if mirror_sources is defined %}
 additionalTrustBundle: | 
-  {{ mirror_certificate }}
+  {{ lookup('file',mirror_certificate) | indent(2,true) }}
 {{ mirror_sources }}
 {% endif %}
