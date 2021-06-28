@@ -17,7 +17,7 @@
 
 - name: Confirm the release of the OpenShift version {{ openshift_version }}
   set_fact:
-    openshift_release: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_release + '/release.txt', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
+    openshift_release: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_release + '/release.txt', validate_certs='no', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
 
 - name: Check if oc client {{ openshift_release }} is already present
   command: oc version

@@ -24,7 +24,10 @@ openshift_client_linux: "openshift-client-linux.tar.gz"
 vcenter_password: "{{ vault_vcenter_password }}"
 
 # Pull Secret                 
-pull_secret_file: "{{ playbook_dir }}/files/pull_secret_name"
+pull_secret_file: "{{ playbook_dir }}/files/{{ pull_secret_name }}"
+
+# Local Registry Certificate
+local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_name }}"
 
 # Utilities
 govc_version: 'v0.25.0'

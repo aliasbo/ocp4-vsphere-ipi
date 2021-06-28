@@ -1,2 +1,4 @@
 .vault_pass
+host_vars/localhost/vault
 inventory/
+files/
