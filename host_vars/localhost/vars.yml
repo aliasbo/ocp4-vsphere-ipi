@@ -2,11 +2,7 @@
 # vars file for vsphere-ipi
 
 # Default openshift-install version
-<<<<<<< HEAD
-openshift_version: "{{ openshift_ver | default('stable') }}"
-=======
 openshift_release: "{{ openshift_version | default('stable') }}"
->>>>>>> feature-disconnected
 
 # Default install-config values
 workers: "{{ workers_num | default('3') }}"

@@ -42,20 +42,6 @@ all:
     vcenter_cluster: <Cluster>
     vcenter_datastore: <Datastore>
     vcenter_network: <NetworkName>
-<<<<<<< HEAD
-##### Internet access through Proxy
-#    proxy_http: <'192.168.1.1:3128'>
-#    no_proxy_http: <'example.com'>
-#    machine_net_cidr: '10.0.0.0/16'
-##### Disconnected Installation using local registry
-#    mirror_certificate: <'certificate_file'>
-#    mirror_ip_port: <'192.168.1.10:5000'>
-#    mirror_repo_name: <'repo_name'>
-#    mirror_ocp_release: <'ocp_release'>
-## Paste the imageContentSources obtained from the 'oc adm release mirror'
-#    mirror_sources: |
-#      <imageContentSources> 
-=======
 ##### Pull Secret file
 #    pull_secret_name: '<file-name>'
 ##### IP address and port of the Proxy
@@ -75,4 +61,3 @@ all:
 #    local_registry_server: '<IP:Port>'
 #    local_registry_certificate: '<certificate_file>'
 #    local_registry_repository: '<ocp4/openshift4>'
->>>>>>> feature-disconnected

@@ -74,28 +74,6 @@
 - set_fact:
     wait_type: bootstrap
 
-<<<<<<< HEAD
-- name: Call wait for bootstrap
-  include_tasks: ./wait-for.yml
-  register: job_result_boot
-  with_sequence: start=0 end=7
-
-- name: debug bootstrap result
-  debug:
-    msg: "{{ job_result_boot }}"
-
-- set_fact:
-    wait_type: install
-
-- name: Call wait for install
-  include_tasks: ./wait-for.yml
-  register: job_result_install
-  with_sequence: start=0 end=7
-
-- name: debug install result
-  debug:
-    msg: "{{ job_result_install }}"
-=======
 - name: Run the following to watch the progress of the operators
   debug:
     msg: "oc --kubeconfig=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/auth/kubeconfig get co"
@@ -105,7 +83,6 @@
     openshift-install wait-for install-complete --dir=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
   async: "{{ 2 * 60 * 60 }}"
   poll: 15 
->>>>>>> feature-disconnected
 
 - name: Gzip Install log
   archive:
