@@ -1,10 +1,4 @@
 .vault_pass
-<<<<<<< HEAD
-inventory/
-files/
-host_vars/localhost/vault
-=======
 host_vars/localhost/vault
 inventory/
 files/
->>>>>>> feature-disconnected

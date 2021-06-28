@@ -80,11 +80,6 @@ sshKey: |
   {{ ssh_pub_key }}
 {% if local_registry_sources is defined %}
 additionalTrustBundle: | 
-<<<<<<< HEAD
-  {{ lookup('file',mirror_certificate) | indent(2,true) }}
-{{ mirror_sources }}
-=======
   {{ lookup('file',local_registry_certificate) | indent(width=2,first=false) }}
 {{ local_registry_sources }}
->>>>>>> feature-disconnected
 {% endif %}
