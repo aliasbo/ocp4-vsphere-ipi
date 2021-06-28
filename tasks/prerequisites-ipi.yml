@@ -107,3 +107,34 @@
     cluster_name: '{{ vcenter_cluster }}'
   register: r_vcenter
   failed_when: vcenter_network not in (r_vcenter.hosts_portgroup_info | json_query('*[*].portgroup | []'))
+
+- name: Import the local registry certificate
+  block: 
+  - name: Copy the Local Registry Certificate to Ubuntu system trust
+    when: ansible_facts['distribution'] == "Ubuntu"
+    become: yes
+    copy:
+      src: "{{ local_registry_certificate }}"
+      dest: /usr/local/share/ca-certificates/
+
+  - name: Update the Ubuntu certificates system trust
+    when: ansible_facts['distribution'] == "Ubuntu"
+    become: yes
+    command: update-ca-certificates
+    register: update_ca_result
+    changed_when: "'0 added' not in update_ca_result.stdout"
+
+  - name: Copy the Local Registry Certificate to RHEL system trust
+    when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+    become: yes
+    copy: 
+      src: "{{ local_registry_certificate }}"
+      dest: /etc/pki/ca-trust/source/anchors/
+
+  - name: Update the RHEL certificates system trust
+    when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
+    become: yes
+    command: update-ca-trust extract
+    register: update_ca_result
+    changed_when: "'0 added' not in update_ca_result.stdout"
+  when: local_registry_cert_name is defined

@@ -2,7 +2,11 @@
 # vars file for vsphere-ipi
 
 # Default openshift-install version
+<<<<<<< HEAD
 openshift_version: "{{ openshift_ver | default('stable') }}"
+=======
+openshift_release: "{{ openshift_version | default('stable') }}"
+>>>>>>> feature-disconnected
 
 # Default install-config values
 workers: "{{ workers_num | default('3') }}"
@@ -22,8 +26,12 @@ openshift_client_linux: "openshift-client-linux.tar.gz"
 # install-config secrets
 # vCenter Password
 vcenter_password: "{{ vault_vcenter_password }}"
+
 # Pull Secret                 
-pull_secret: "{{ vault_pull_secret }}"
+pull_secret_file: "{{ playbook_dir }}/files/{{ pull_secret_name }}"
+
+# Local Registry Certificate
+local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_name }}"
 
 # Utilities
 govc_version: 'v0.25.0'
