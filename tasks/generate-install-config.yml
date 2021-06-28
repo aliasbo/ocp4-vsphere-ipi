@@ -15,28 +15,46 @@
   set_fact:
     ssh_pub_key: "{{ r_sshkey.public_key }}"
 
-- name: Confirm OpenShift Version in mirror
+- name: Confirm the release of the OpenShift version {{ openshift_version }}
   set_fact:
-    ocp_install_version: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_version + '/release.txt', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
+    openshift_release: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_release + '/release.txt', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
+
+- name: Check if oc client {{ openshift_release }} is already present
+  command: oc version
+  register: r_oc
+  failed_when: r_oc.stdout is not search(openshift_release)
+  ignore_errors: yes
+
+- name: Install the oc client
+  block:
+  - name: Download the oc client {{ openshift_release }}
+    get_url:
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/{{ openshift_client_linux }}
+      dest: /home/{{ ansible_env.USER }}/openshift/
+      timeout: 30
+  - name: Unpack the oc client into /usr/local/bin
+    unarchive:
+      src: /home/{{ ansible_env.USER }}/openshift/{{ openshift_client_linux }}
+      dest: /usr/local/bin/
+      exclude:
+      - README.md
+    become: yes
+  when: r_oc is failed
 
 - name: Check if openshift-install is already present
   command: openshift-install version
   register: r_installer
-  failed_when: r_installer.stdout is not search(ocp_install_version)
+  failed_when: r_installer.stdout is not search(openshift_release)
   ignore_errors: yes
 
-- name: OpenShift Artifacts
+- name: Get the openshift-install in a connected installation
   block:
-  - name: Download the OpenShift artifacts version {{ openshift_version }}
+  - name: Download the openshift-install release {{ openshift_release }}
     get_url:
-      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_version }}/{{ item }}
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/{{ openshift_install_linux }}
       dest: /home/{{ ansible_env.USER }}/openshift/
       timeout: 30
-    loop:
-    - "{{ openshift_install_linux }}"
-    - "{{ openshift_client_linux }}"
-
-  - name: Unpack the openshift-install
+  - name: Unpack the openshift-install into /usr/local/bin
     unarchive:
       src: /home/{{ ansible_env.USER }}/openshift/{{ openshift_install_linux }}
       dest: /usr/local/bin/
@@ -44,15 +62,20 @@
       - "--add-file"
       - "openshift-install"
     become: yes
+  when: r_installer is failed and local_registry_sources is not defined
 
-  - name: Unpack the openshift client
-    unarchive:
-      src: /home/{{ ansible_env.USER }}/openshift/{{ openshift_client_linux }}
-      dest: /usr/local/bin/
-      exclude:
-      - README.md
+- name: Get the openshift-install in a disconnected installation
+  block:
+  - name: Extract the openshift-install release {{ openshift_release }}
+    command: >
+      oc adm release extract -a {{ pull_secret_file }}
+      --command=openshift-install
+      {{ local_registry_server }}/{{ local_registry_repository }}:{{ openshift_release }}-x86_64
+
+  - name: Move the openshift-install to /usr/local/bin
+    command: mv openshift-install /usr/local/bin
     become: yes
-  when: r_installer is failed
+  when: r_installer is failed and local_registry_sources is defined
 
 - name: Create the install-config file
   template:
