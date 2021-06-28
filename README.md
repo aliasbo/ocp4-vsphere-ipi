@@ -30,36 +30,12 @@ cd GIT-REPO-DIR
 
 The file `vault` will store the password for the vCenter.
 
-<<<<<<< HEAD
-Create the directory `files` at the current path of the project.
-=======
 Create the `files` directory.
->>>>>>> feature-disconnected
 
 ```shell
 mkdir files
 ```
 
-<<<<<<< HEAD
-Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site.
-
-Move the pull-secret file to `files/pull-secret` directory.
-
-> In case of an installation from a local registry mirror. The file should have the merged secret from the local registry.
-
-Create the vault file with the content of the pull-secret.
-
-```shell
-echo "vault_pull_secret: $(< files/pull-secret)" > host_vars/localhost/vault
-```
-
-Save the vCenter password to a file in `files/vcenter_password`.
-
-Add the content of the password file to the vault file.
-
-```shell
-echo "vault_vcenter_password: $(< files/vcenter_password)" >>  host_vars/localhost/vault
-=======
 Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site and save it to
 
 Move the pull-secret file to `files`.
@@ -74,7 +50,6 @@ Add the vCenter password to the vault file.
 
 ```shell
 echo "vault_vcenter_password: SecretPassword" >>  host_vars/localhost/vault
->>>>>>> feature-disconnected
 ```
 
 Create `.vault_pass` to store the password of your choice.
