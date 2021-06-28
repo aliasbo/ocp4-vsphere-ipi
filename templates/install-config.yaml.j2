@@ -75,7 +75,7 @@ platform:
     username: {{ vcenter_username }}
     vCenter: {{ vcenter_hostname }}
 publish: External
-pullSecret: '{{ pull_secret | to_json }}'
+pullSecret: '{{ lookup('file',pull_secret_file) | to_json }}'
 sshKey: |
   {{ ssh_pub_key }}
 {% if mirror_sources is defined %}

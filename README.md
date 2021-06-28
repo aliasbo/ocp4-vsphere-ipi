@@ -26,32 +26,30 @@ Change to the repo directory
 cd GIT-REPO-DIR
 ```
 
-## Create a vault file
+## Add sensitive data
 
-The file `vault` will store the Pull Secret and the password for vCenter.
+The file `vault` will store the password for the vCenter.
+
+Create the `files` directory.
+
+```shell
+mkdir files
+```
 
 Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/openshift/install/pull-secret) on the Red Hat OpenShift Cluster Manager site and save it to
 
-Move the pull-secret file to your current path.
+Move the pull-secret file to `files`.
 
-Create the vault file with the content of the pull-secret.
+> In case of an installation from a local registry mirror. Add the merged pullsecret instead.
 
 ```shell
-echo "vault_pull_secret: $(< pull-secret)" > host_vars/localhost/vault
+mv pull-secret files/
 ```
 
-Save the vCenter password to a file called `vcenter_password`.
-
-Add the content of the password file to the vault file.
+Add the vCenter password to the vault file.
 
 ```shell
-echo "vault_vcenter_password: $(< vcenter_password)" >>  host_vars/localhost/vault
-```
-
-In case of an installation from a local registry mirror. Add the content of the mirror pullsecret.
-
-```shell
-echo "vault_mirror_pullsecret: $(< mirror-pullsecret)" >> host_vars/localhost/vault
+echo "vault_vcenter_password: SecretPassword" >>  host_vars/localhost/vault
 ```
 
 Create `.vault_pass` to store the vault password of your choice.
@@ -60,16 +58,19 @@ Create `.vault_pass` to store the vault password of your choice.
 echo "secret_password" > .vault_pass
 ```
 
-Encrypt the file. Ansible will look for `.vault_pass` at the main dir of the repository.
+Encrypt the vault and pull-secret files. Ansible will look for `.vault_pass` at the main dir of the repository.
 
 ```shell
 ansible-vault encrypt host_vars/localhost/vault
+ansible-vault encrypt files/pull-secret
 ```
 
 View the file to confirm the data is correct.
 
 ```shell
 ansible-vault view host_vars/localhost/vault
+
+ansible-vault view files/pull-secret
 ```
 
 ## Create the inventory file

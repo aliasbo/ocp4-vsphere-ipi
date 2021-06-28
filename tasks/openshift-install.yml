@@ -95,11 +95,6 @@
     owner: "{{ ansible_env.USER }}"
     mode: 0775
 
-- name: Set up .kube/config
-  copy:
-    src: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/auth/kubeconfig
-    dest: /home/{{ ansible_env.USER }}/.kube/config
-
 - name: Create OpenShift Bash completion file
   become: true
   shell: oc completion bash >/etc/bash_completion.d/openshift
