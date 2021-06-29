@@ -21,5 +21,4 @@
   with_items:
     - "Openshift Master Console: {{ webconsole_url.stdout | trim }}"
     - "Openshift API for command line 'oc' client: {{ api_url.stdout | trim }}"
-    - "Openshift access: export KUBECONFIG=/home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}/auth/kubeconfig"
-
+    - "Openshift access: export KUBECONFIG={{ openshift_cluster_installation_dir }}/auth/kubeconfig"

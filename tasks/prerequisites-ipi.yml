@@ -1,7 +1,7 @@
 ---
 - name: Create cluster directory
   file:
-    path: /home/{{ ansible_env.USER }}/openshift/{{ cluster_name }}
+    path: "{{ openshift_cluster_installation_dir }}"
     state: directory
     force: yes
 
@@ -40,7 +40,7 @@
 - name: Obtain the vCenter certificates
   unarchive:
     src: https://{{ vcenter_hostname }}/certs/download.zip
-    dest: /home/{{ ansible_env.USER }}/openshift/
+    dest: "{{ openshift_cluster_dir }}"
     remote_src: yes
     validate_certs: false
 
@@ -48,7 +48,7 @@
   when: ansible_facts['distribution'] == "Ubuntu"
   become: yes
   shell: |
-    for cert in /home/{{ ansible_env.USER }}/openshift/certs/lin/*
+    for cert in {{ openshift_cluster_dir }}/certs/lin/*
     do
       cp $cert /usr/local/share/ca-certificates/${cert##*/}.crt
     done
@@ -64,7 +64,7 @@
   when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
   become: yes
   shell: |
-    cp /home/{{ ansible_env.USER }}/openshift/certs/lin/* /etc/pki/ca-trust/source/anchors/
+    cp {{ openshift_cluster_dir }}/certs/lin/* /etc/pki/ca-trust/source/anchors/
 
 - name: Update the RHEL certificates system trust
   when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"

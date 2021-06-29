@@ -4,6 +4,10 @@
 # Default openshift-install version
 openshift_release: "{{ openshift_version | default('stable') }}"
 
+# Working directories
+openshift_cluster_dir: "{{ ansible_env.HOME }}/openshift/{{ cluster_name }}"
+openshift_cluster_installation_dir: "{{ openshift_cluster_dir }}/installation"
+
 # Default install-config values
 workers: "{{ workers_num | default('3') }}"
 pod_cidr: "{{ pod_sdn_cidr | default('10.128.0.0/14') }}"
@@ -27,7 +31,7 @@ vcenter_password: "{{ vault_vcenter_password }}"
 pull_secret_file: "{{ playbook_dir }}/files/{{ pull_secret_name }}"
 
 # Local Registry Certificate
-local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_name }}"
+local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_name | default(omit) }}"
 
 # Utilities
 govc_version: 'v0.25.0'

@@ -49,6 +49,9 @@ all:
 #    no_proxy_http: 'example.com'
 #    machine_cidr: '10.0.0.0/16'
 ##### For Disconnected installation
+#    local_registry_server: '<IP:Port>'
+#    local_registry_cert_name: '<certificate_file>'
+#    local_registry_repository: '<ocp4/openshift4>'
 ##> Paste below the imageContentSources obtained from the 'oc adm release mirror'
 #    local_registry_sources: |
 #      imageContentSources:
@@ -58,7 +61,3 @@ all:
 #      - mirrors:
 #        - local.registry:5000/ocp4/openshift4
 #        source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
-##> Add the certificate of the mirror registry
-#    local_registry_server: '<IP:Port>'
-#    local_registry_cert_name: '<certificate_file>'
-#    local_registry_repository: '<ocp4/openshift4>'
