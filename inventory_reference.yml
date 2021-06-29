@@ -47,6 +47,7 @@ all:
 ##### IP address and port of the Proxy
 #    proxy_http: '192.168.1.1:3128'
 #    no_proxy_http: 'example.com'
+#    machine_cidr: '10.0.0.0/16'
 ##### For Disconnected installation
 ##> Paste below the imageContentSources obtained from the 'oc adm release mirror'
 #    local_registry_sources: |
