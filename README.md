@@ -40,11 +40,15 @@ Download the pull-secret from the [Pull Secret page](https://cloud.redhat.com/op
 
 Move the pull-secret file to `files`.
 
-> In case of an installation from a local registry mirror. Add the merged pullsecret instead.
-
 ```shell
 mv pull-secret files/
 ```
+
+> In case of an __installation from a local registry mirror__. Add the merged pullsecret instead, and copy the certificate of the registry.
+> ```shell
+> cp ~/merged-pullsecret.json files/
+> cp ~/registry.crt files/
+> ```
 
 Add the vCenter password to the vault file.
 
