@@ -10,12 +10,12 @@ all:
 ##### Number of worker nodes
 #    workers_num: 3
 ##### Spec for the worker nodes
-#    worker_detail:
+#    worker_spec:
 #      cpus: 2
 #      memoryMB: 8196
 #      diskSizeGB: 120
 ##### Spec for the master nodes
-#    master_detail:
+#    master_spec:
 #      cpus: 2
 #      memoryMB: 8196
 #      diskSizeGB: 120

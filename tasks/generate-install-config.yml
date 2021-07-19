@@ -16,7 +16,7 @@
     ssh_pub_key: "{{ r_sshkey.public_key }}"
     ssh_pri_key: "{{ r_sshkey.filename }}"
 
-- name: Confirm the release of the OpenShift version {{ openshift_version }}
+- name: Confirm the OpenShift release {{ openshift_release }}
   set_fact:
     openshift_release: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_release + '/release.txt', validate_certs='no', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
 
