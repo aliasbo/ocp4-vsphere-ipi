@@ -53,7 +53,7 @@ mv pull-secret files/
 Add the vCenter password to the vault file.
 
 ```shell
-echo "vault_vcenter_password: SecretPassword" >>  host_vars/localhost/vault
+echo "vault_vcenter_password: SecretPassword" >  host_vars/localhost/vault
 ```
 
 Create `.vault_pass` to store the password of your choice.

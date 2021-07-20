@@ -1,41 +1,56 @@
 ---
-- name: Check if openshift-install is already running
+- name: openshift-install is already running
   command: pgrep -a -f 'openshift-install create cluster'
   register: r_pgrep
   ignore_errors: true
-  changed_when: "'openshift-install create cluster' not in r_pgrep.stdout"
 
-- name: Run the installer
+- name: Running openshift-install create cluster --dir={{ openshift_cluster_installation_dir }}
   command: openshift-install create cluster --dir={{ openshift_cluster_installation_dir }}
   async: "{{ 2 * 60 * 60 }}"
   poll: 0
   register: r_openshift_install
-  when: r_pgrep.changed
+  when: r_pgrep is failed
 
-- name: Finding the name of the bootstrap VM using the InfraID
+- name: Wait for the metadata.json file 
+  wait_for:
+    path: "{{ openshift_cluster_installation_dir }}/metadata.json"
+
+- name: Getting the name of the bootstrap VM using the InfraID
   set_fact:
     bootstrap_name: "{{ lookup('file','{{ openshift_cluster_installation_dir }}/metadata.json') | from_json | json_query('infraID') }}-bootstrap"
 
-- name: Wait for the bootstrap VM {{ bootstrap_name }} to be created
+- name: Wait for the bootstrap creation message in the install log
   wait_for:
     path: "{{ openshift_cluster_installation_dir }}/.openshift_install.log"
-    search_regex: 'modules.bootstrap.vsphere_virtual_machine.vm: Creation complete'
+    search_regex: 'module.bootstrap.vsphere_virtual_machine.vm: Creation complete'
+    delay: 10
+    sleep: 2
+    timeout: 900
 
-- name: Pause while the bootstrap VM resources are created
-  pause:
-    minutes: 1
-
-- name: Get the IP of the bootstrap VM {{ bootstrap_name }}
-  community.vmware.vmware_guest_info:
+- name: Confirm the VM {{ bootstrap_name }} exists
+  community.vmware.vmware_vm_info:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    datacenter: "{{ vcenter_datacenter }}"
+    vm_type: vm
+  register: r_vm_info
+  until: r_vm_info.virtual_machines | json_query(query)
+  retries: 10
+  delay: 6
+  vars:
+    query: "[?guest_name=='{{ bootstrap_name }}']"
+
+- name: Pause while the resources of {{ bootstrap_name }} are created
+  pause:
+    minutes: 1
+
+- name: Get the IP of {{ bootstrap_name }}
+  community.vmware.vmware_guest_tools_wait:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
     name: "{{ bootstrap_name }}"
   register: r_vm_guest
-  until: r_vm_guest.instance.ipv4
-  retries: 4
-  delay: 30
 
 - name: Set the bootstrap_ip to {{ r_vm_guest.instance.ipv4 }}
   set_fact:
@@ -46,7 +61,7 @@
 #- to add localhost for self-resolution like api-int
 #  The bug is fixed starting on v4.8
 #- so these should be refactored or removed
-- name: Fix resolv.conf in bootstrap
+- name: Fix resolv.conf in {{ bootstrap_ip }}
   shell: |
     ssh -tt -i {{ ssh_pri_key }} -oStrictHostKeyChecking=off core@{{ bootstrap_ip }} '
     if ! /bin/grep "nameserver 127.0.0.1" /etc/resolv.conf >/dev/null
@@ -58,7 +73,7 @@
     executable: /bin/bash
   ignore_errors: true
 
-- name: Fix nm_dispatcher in bootstrap
+- name: Fix nm_dispatcher in {{ bootstrap_ip }}
   shell: |
     ssh -tt -i {{ ssh_pri_key }} core@{{ bootstrap_ip }} '
     sudo sed -i "/sed/s/by\.\*\$/by/" /etc/NetworkManager/dispatcher.d/30-local-dns-prepender
@@ -67,7 +82,7 @@
     executable: /bin/bash
   ignore_errors: true
 
-- name: For close inspection of the bootstrap process
+- name: For close inspection of the bootstrap process run
   debug:
     msg: "ssh -i {{ ssh_pri_key }} core@{{ bootstrap_ip }} 'journalctl -b -f -u release-image.service -u bootkube.service'"
 

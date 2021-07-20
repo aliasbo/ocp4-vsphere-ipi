@@ -8,15 +8,20 @@
   - name: Tasks to prepare the bastion server
     import_tasks: tasks/bastion-host.yml 
     become: yes
+    tags: bastion
 
   - name: Tasks to validate the prerequisites
     import_tasks: tasks/prerequisites-ipi.yml
+    tags: prereq
 
   - name: Tasks to generate install_config.yaml
     import_tasks: tasks/generate-install-config.yml
+    tags: config
 
   - name: Tasks to create the OpenShift cluster
     import_tasks: tasks/openshift-install.yml
+    tags: install
 
   - name: Tasks to print the cluster connection info
     import_tasks: tasks/print-cluster-info.yml
+    tags: print

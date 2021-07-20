@@ -1,25 +1,26 @@
----
+#jinja2: lstrip_blocks: "True"
 apiVersion: v1
 baseDomain: {{ base_domain }}
 compute:
 - architecture: amd64
   hyperthreading: Enabled
   name: worker
-  replicas: {{ workers }}
+  replicas: {{ num_workers }}
 {%- if worker_spec is defined %}
+
   platform:
     vsphere:
-{% if worker_spec.cpus is defined %}
+  {% if worker_spec.cpus is defined %}
       cpus: {{ worker_spec.cpus }}
-{% endif %}
-{% if worker_spec.memoryMB is defined %}
+  {% endif %}
+  {% if worker_spec.memoryMB is defined %}
       memoryMB: {{ worker_spec.memoryMB }}
-{% endif %}
-{% if worker_spec.diskSizeGB is defined %}
+  {% endif %}
+  {% if worker_spec.diskSizeGB is defined %}
       osDisk:
         diskSizeGB: {{ worker_spec.diskSizeGB }}
-{% endif %}
-{%- else %}   
+  {% endif %}
+{% else %}   
   platform: {}
 {% endif %}
 controlPlane:
@@ -28,19 +29,20 @@ controlPlane:
   name: master
   replicas: 3
 {%- if master_spec is defined %}
+
   platform:
     vsphere:
-{% if master_spec.cpus is defined %}
+  {% if master_spec.cpus is defined %}
       cpus: {{ master_spec.cpus }}
-{% endif %}
-{% if master_spec.memoryMB is defined %}
+  {% endif %}
+  {% if master_spec.memoryMB is defined %}
       memoryMB: {{ master_spec.memoryMB }}
-{% endif %}
-{% if master_spec.diskSizeGB is defined %}
+  {% endif %}
+  {% if master_spec.diskSizeGB is defined %}
       osDisk:
         diskSizeGB: {{ master_spec.diskSizeGB }}
-{% endif %}
-{%- else %}   
+  {% endif %}
+{% else %}   
   platform: {}
 {% endif %}
 metadata:

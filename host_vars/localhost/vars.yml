@@ -9,7 +9,7 @@ openshift_cluster_dir: "{{ ansible_env.HOME }}/openshift/{{ cluster_name }}"
 openshift_cluster_installation_dir: "{{ openshift_cluster_dir }}/installation"
 
 # Default install-config values
-workers: "{{ workers_num | default('3') }}"
+num_workers: "{{ workers | default('3') }}"
 pod_cidr: "{{ pod_sdn_cidr | default('10.128.0.0/14') }}"
 service_cidr: "{{ service_sdn_cidr | default('172.30.0.0/16') }}"
 #machine_cidr: '10.0.0.0/16'

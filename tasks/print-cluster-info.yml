@@ -1,24 +1,21 @@
 ---
 - name: Get console route
-  command: oc get route -n openshift-console console -o json
-  register: routeconsole
+  command: oc --kubeconfig={{ openshift_cluster_installation_dir }}/auth/kubeconfig get route -n openshift-console console -o json
+  register: r_console_route
   retries: 10
   delay: 30
-  until: routeconsole is succeeded
+  until: r_console_route is succeeded
   ignore_errors: true
 
-- name: Get Webconsole URL
-  command: oc whoami --show-console
-  register: webconsole_url
+- name: Wait for the Install complete message in the install log
+  wait_for:
+    path: "{{ openshift_cluster_installation_dir }}/.openshift_install.log"
+    search_regex: 'Install complete!'
 
-- name: Get API URL
-  command: oc whoami --show-server
-  register: api_url
+- name: Get output from install log
+  command: openshift-install wait-for install-complete --dir={{ openshift_cluster_installation_dir }}
+  register: r_install_log
 
-- name: Print Connection Information
+- name: Print 
   debug:
-    msg: "{{ item }}"
-  with_items:
-    - "Openshift Master Console: {{ webconsole_url.stdout | trim }}"
-    - "Openshift API for command line 'oc' client: {{ api_url.stdout | trim }}"
-    - "Openshift access: export KUBECONFIG={{ openshift_cluster_installation_dir }}/auth/kubeconfig"
+    msg: "{{ r_install_log.stdout_lines  }}"
