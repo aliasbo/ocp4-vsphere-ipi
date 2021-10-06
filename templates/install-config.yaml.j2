@@ -27,7 +27,12 @@ controlPlane:
   architecture: amd64
   hyperthreading: Enabled
   name: master
+{%- if one_master %}
+
+  replicas: 1
+{% else %}   
   replicas: 3
+{% endif %}
 {%- if master_spec is defined %}
 
   platform:

@@ -8,16 +8,22 @@ all:
 ##### OpenShift version. The default value is 'stable' or dotted version '4.7.7' (latest)
 #    openshift_version: 'stable'
 ##### Number of worker nodes
+<<<<<<< HEAD
 #    workers: 3
+=======
+#    workers: 2
+>>>>>>> single-master
 ##### Spec for the worker nodes
 #    worker_spec:
 #      cpus: 2
 #      memoryMB: 8196
 #      diskSizeGB: 120
+##### Single node master?
+#    single_master: false
 ##### Spec for the master nodes
 #    master_spec:
-#      cpus: 2
-#      memoryMB: 8196
+#      cpus: 4
+#      memoryMB: 16384
 #      diskSizeGB: 120
 ##### IP address block for pods
 #    pod_sdn_cidr: '10.128.0.0/14'

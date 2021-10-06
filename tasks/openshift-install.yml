@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 - name: openshift-install is already running
+=======
+- name: Is openshift-install already running?
+>>>>>>> single-master
   command: pgrep -a -f 'openshift-install create cluster'
   register: r_pgrep
   ignore_errors: true
@@ -26,6 +30,7 @@
     delay: 10
     sleep: 2
     timeout: 900
+<<<<<<< HEAD
 
 - name: Confirm the VM {{ bootstrap_name }} exists
   community.vmware.vmware_vm_info:
@@ -43,6 +48,27 @@
 - name: Pause while the resources of {{ bootstrap_name }} are created
   pause:
     minutes: 1
+=======
+
+- name: Confirm the VM {{ bootstrap_name }} exists
+  community.vmware.vmware_vm_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    vm_type: vm
+  register: r_vm_info
+  until: r_vm_info.virtual_machines | json_query(query)
+  retries: 10
+  delay: 6
+  vars:
+    query: "[?guest_name=='{{ bootstrap_name }}']"
+
+- name: Wait for port 22 in {{ api_ip }}
+  wait_for:
+    port: 22
+    host: "{{ api_ip }}"
+    delay: 10
+>>>>>>> single-master
 
 - name: Get the IP of {{ bootstrap_name }}
   community.vmware.vmware_guest_tools_wait:
@@ -82,11 +108,73 @@
     executable: /bin/bash
   ignore_errors: true
 
+<<<<<<< HEAD
+=======
+- name: For Single Master Cluster
+  block:
+  - name: Wait for the API up message in the install log
+    wait_for:
+      path: "{{ openshift_cluster_installation_dir }}/.openshift_install.log"
+      search_regex: 'API\s+.*\s+up'
+      delay: 10
+      sleep: 2
+      timeout: 900
+
+  - name: Wait for the API in {{ api_ip }}
+    wait_for:
+      port: 6443
+      host: "{{ api_ip }}"
+      delay: 10
+
+  - name: Wait for the etcd cluster object
+    shell: /usr/local/bin/oc get etcd cluster
+    register: result
+    until: result.rc == 0
+    retries: 5
+    delay: 10
+
+  - name: Patch the etcd operator
+    k8s:
+      kubeconfig: "{{ openshift_cluster_installation_dir }}/auth/kubeconfig"
+      merge_type: merge
+      definition:
+        apiVersion: operator.openshift.io/v1
+        kind: Etcd
+        metadata:
+          name: cluster
+        spec:
+          managementState: Managed
+          unsupportedConfigOverrides:
+            useUnsupportedUnsafeNonHANonProductionUnstableEtcd: true
+
+  - name: Wait for the authentication cluster object
+    shell: /usr/local/bin/oc get authentication cluster
+    register: result
+    until: result.rc == 0
+    retries: 5
+    delay: 10
+
+  - name: Patch the authentication operator
+    k8s:
+      kubeconfig: "{{ openshift_cluster_installation_dir }}/auth/kubeconfig"
+      merge_type: merge
+      definition:
+        apiVersion: operator.openshift.io/v1
+        kind: Authentication
+        metadata:
+          name: cluster
+        spec:
+          managementState: Managed
+          unsupportedConfigOverrides:
+            useUnsupportedUnsafeNonHANonProductionUnstableOAuthServer: true
+  when: one_master
+
+>>>>>>> single-master
 - name: For close inspection of the bootstrap process run
   debug:
     msg: "ssh -i {{ ssh_pri_key }} core@{{ bootstrap_ip }} 'journalctl -b -f -u release-image.service -u bootkube.service'"
 
-- name: Wait for bootstrap-complete
+- name: Wait until cluster bootstrapping has completed
   command: |
     openshift-install wait-for bootstrap-complete --dir={{ openshift_cluster_installation_dir }}
   async: "{{ 2 * 60 * 60 }}"
@@ -96,7 +184,7 @@
   debug:
     msg: "oc --kubeconfig={{ openshift_cluster_installation_dir }}/auth/kubeconfig get co"
 
-- name: Wait for install-complete
+- name: Wait until the cluster is ready
   command: |
     openshift-install wait-for install-complete --dir={{ openshift_cluster_installation_dir }}
   async: "{{ 2 * 60 * 60 }}"
@@ -118,3 +206,4 @@
 - name: Create OpenShift Bash completion file
   become: true
   shell: oc completion bash >/etc/bash_completion.d/openshift
+
