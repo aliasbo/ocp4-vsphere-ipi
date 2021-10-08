@@ -13,17 +13,10 @@
     search_regex: 'Install complete!'
 
 - name: Get output from install log
-<<<<<<< HEAD
-  command: openshift-install wait-for install-complete --dir={{ openshift_cluster_installation_dir }}
-=======
   command: tail -5 {{ openshift_cluster_installation_dir }}/.openshift_install.log
->>>>>>> single-master
   register: r_install_log
 
 - name: Print 
   debug:
-<<<<<<< HEAD
     msg: "{{ r_install_log.stdout_lines  }}"
-=======
-    msg: "{{ r_install_log.stdout_lines  }}"
->>>>>>> single-master
+

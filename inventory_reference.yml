@@ -8,11 +8,7 @@ all:
 ##### OpenShift version. The default value is 'stable' or dotted version '4.7.7' (latest)
 #    openshift_version: 'stable'
 ##### Number of worker nodes
-<<<<<<< HEAD
-#    workers: 3
-=======
 #    workers: 2
->>>>>>> single-master
 ##### Spec for the worker nodes
 #    worker_spec:
 #      cpus: 2
