@@ -18,5 +18,5 @@
 
 - name: Print 
   debug:
-    msg: "{{ r_install_log.stdout_lines  }}"
+    var: r_install_log.stdout_lines | regex_replace('"','') | regex_replace('\\+','')
 
