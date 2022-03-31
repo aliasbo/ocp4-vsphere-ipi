@@ -1,4 +1,5 @@
 .vault_pass
 host_vars/localhost/vault
-inventory/
+inventory/*
+!inventory/reference.yml
 files/
