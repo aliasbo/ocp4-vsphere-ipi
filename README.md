@@ -14,16 +14,16 @@ The execution has this workflow:
 
 ## Clone the repo
 
-Clone the repo.
+Clone this repo.
 
 ```shell
-git clone https://GIT-REPO.git
+git clone https://github.com/USER/REPO.git
 ```
 
 Change to the repo directory
 
 ```shell
-cd GIT-REPO-DIR
+cd REPO-DIR
 ```
 
 ## Add sensitive data
@@ -79,16 +79,10 @@ ansible-vault view files/pull-secret
 
 ## Create the inventory file
 
-Create the directory to keep the inventory file.
+Create a copy of the reference inventory file within the `inventory` directory.
 
 ```shell
-mkdir inventory
-```
-
-Create a copy of the reference inventory file into the created `inventory` directory.
-
-```shell
-cp inventory_reference.yml inventory/<cluster_name>.yml
+cp inventory/reference.yml inventory/<cluster_name>.yml
 ```
 
 Edit the new file to set the value of the required objects. The commented objects are optional.
@@ -97,8 +91,15 @@ Edit the new file to set the value of the required objects. The commented object
 vim inventory/<cluster_name>.yml
 ```
 
+Install the required collections using Ansible Galaxy.
+
+```shell
+ansible-galaxy collection install -r requirements.yml
+```
+
 Run the `main.yaml` playbook using the previous inventory.
 
 ```shell
 ansible-playbook -i inventory/openshift_cluster.yml main.yml
 ```
+
