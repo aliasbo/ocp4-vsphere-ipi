@@ -81,11 +81,12 @@ all:
     # example: 'mydomain.com'
     no_proxy_http: {}
 
-    # PEM-encoded X.509 certificate file name only
-    # If the proxy has a certificate signed by an authority which RHCOS
+    # PEM-encoded X.509 certificate of the proxy
+    # In case the proxy has a certificate signed by an authority which RHCOS
     # does not trust by default
+    # enter only the file name
     # it should exist in the files/ directory of this playbook
-    proxy_cert_bundle: {}
+    proxy_cert: {}
 
     # vCenter Details
     # vcenter_password should be in vault
@@ -101,9 +102,10 @@ all:
     # IP:port
     local_registry_server: {}
 
-    # Certificate file name only
-    # it should exist in the files/ directory of this playbook
-    local_registry_cert_name: {}
+    # Certificate of the local registry
+    # enter only the file name
+    # the file should exist in the files/ directory of this playbook
+    local_registry_cert: {}
 
     # Registry repository. Example: ocp4/openshift4
     local_registry_repository: {}
