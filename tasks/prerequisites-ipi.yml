@@ -98,7 +98,7 @@
     when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
     become: yes
     copy: 
-      src: "{{ local_registry_certificate }}"
+      src: "{{ local_registry_cert }}"
       dest: /etc/pki/ca-trust/source/anchors/
 
   - name: Update the RHEL certificates system trust
