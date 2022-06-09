@@ -82,12 +82,12 @@ publish: External
 pullSecret: '{{ lookup('file',pull_secret_file) | to_json | from_json }}'
 sshKey: |
   {{ ssh_pub_key }}
-{% if local_registry_certificate is defined or proxy_certificate is defined %}
+{% if local_registry_certificate|length > 0 or proxy_certificate|length > 0 %}
 additionalTrustBundle: | 
-{%  if proxy_certificate is defined %}
+{%  if proxy_certificate|length > 0 %}
   {{ lookup('file',proxy_certificate) | indent(width=2,first=false) }}
 {%  endif %}
-{%  if local_registry_certificate is defined %}
+{%  if local_registry_certificate|length > 0 %}
   {{ lookup('file',local_registry_certificate) | indent(width=2,first=false) }}
 {%  endif %}
 {% endif %}
