@@ -4,6 +4,9 @@
   connection: local
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
+    VMWARE_HOST: '{{ vcenter_hostname }}'
+    VMWARE_USER: '{{ vcenter_username }}'
+    VMWARE_PASSWORD: '{{ vcenter_password }}'
   tasks:
   - name: Tasks to prepare the bastion server
     import_tasks: tasks/bastion-host.yml 

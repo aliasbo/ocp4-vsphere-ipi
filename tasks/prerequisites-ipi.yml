@@ -59,35 +59,23 @@
 
 - name: Confirm datacenter in vCenter is {{ vcenter_datacenter }}
   community.vmware.vmware_datacenter_info:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_username }}'
-    password: '{{ vcenter_password }}'
   register: r_vcenter
   failed_when: vcenter_datacenter not in (r_vcenter.datacenter_info | json_query('[*].name'))
 
 - name: Confirm cluster in vCenter is {{ vcenter_cluster }}
   community.vmware.vmware_cluster_info:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_username }}'
-    password: '{{ vcenter_password }}'
     datacenter: '{{ vcenter_datacenter }}'
   register: r_vcenter
   failed_when: vcenter_cluster not in (r_vcenter.clusters | json_query('keys(@)'))
 
 - name: Confirm datastore in vCenter is {{ vcenter_datastore }}
   community.vmware.vmware_datastore_info:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_username }}'
-    password: '{{ vcenter_password }}'
     datacenter: '{{ vcenter_datacenter }}'
   register: r_vcenter
   failed_when: vcenter_datastore not in (r_vcenter.datastores | json_query('[*].name'))
 
 - name: Confirm PortGroup in vCenter is {{ vcenter_network }}
   community.vmware.vmware_portgroup_info:
-    hostname: '{{ vcenter_hostname }}'
-    username: '{{ vcenter_username }}'
-    password: '{{ vcenter_password }}'
     cluster_name: '{{ vcenter_cluster }}'
   register: r_vcenter
   failed_when: vcenter_network not in (r_vcenter.hosts_portgroup_info | json_query('*[*].portgroup | []'))
