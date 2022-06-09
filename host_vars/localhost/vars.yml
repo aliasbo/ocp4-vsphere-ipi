@@ -22,6 +22,7 @@ vcenter_password: "{{ vault_vcenter_password }}"
 pull_secret_file: "{{ playbook_dir }}/files/{{ pull_secret_name }}"
 
 # Local Registry Certificate
+proxy_certificate: "{{ playbook_dir }}/files/{{ proxy_cert_bundle | default(omit) }}"
 local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_name | default(omit) }}"
 
 # Utilities
