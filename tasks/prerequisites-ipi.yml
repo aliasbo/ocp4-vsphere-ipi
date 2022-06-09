@@ -107,4 +107,4 @@
     command: update-ca-trust extract
     register: update_ca_result
     changed_when: "'0 added' not in update_ca_result.stdout"
-  when: local_registry_cert_name|length > 1
+  when: local_registry_cert|length != 0
