@@ -5,22 +5,11 @@
     state: present
   when: ansible_facts['distribution'] == "CentOS"
 
-- name: Install common Packages
-  package:
-    name: "{{ common_packages }}"
-    state: present
-
-- name: Install RHEL Packages
+- name: Install RPM Packages
   yum:
     name: "{{ rpm_packages }}"
     state: present
   when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
-
-- name: Install Ubuntu Packages
-  apt:
-    name: "{{ deb_packages }}"
-    state: present
-  when: ansible_facts['distribution'] == "Ubuntu"
 
 - name: Install PIP packages
   pip:

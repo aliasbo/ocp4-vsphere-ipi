@@ -85,7 +85,7 @@
     args:
       executable: /bin/bash
     ignore_errors: true
-  when: (openshift_release.split(".")[1] | int) < 9
+  when: (openshift_version.split(".")[1] | int) < 9
 
 - name: For Single Master Cluster
   block:

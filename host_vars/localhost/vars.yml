@@ -1,19 +1,9 @@
 ---
-# vars file for vsphere-ipi
-
-# Default openshift-install version
-openshift_release: "{{ openshift_version | default('stable') }}"
+# vars file for ocp4-vsphere-ipi
 
 # Working directories
 openshift_cluster_dir: "{{ ansible_env.HOME }}/openshift/{{ cluster_name }}"
 openshift_cluster_installation_dir: "{{ openshift_cluster_dir }}/installation"
-
-# Default install-config values
-num_workers: "{{ workers | default('2') }}"
-one_master: "{{ single_master | default(false) }}"
-pod_cidr: "{{ pod_sdn_cidr | default('10.128.0.0/14') }}"
-service_cidr: "{{ service_sdn_cidr | default('172.30.0.0/16') }}"
-#machine_cidr: '10.0.0.0/16'
 
 # Cluster
 cluster_domain: "{{ cluster_name }}.{{ base_domain }}"
@@ -38,7 +28,7 @@ local_registry_certificate: "{{ playbook_dir }}/files/{{ local_registry_cert_nam
 govc_version: 'v0.25.0'
 
 # Packages
-common_packages:
+rpm_packages:
   - python3
   - python3-pip
   - python3-dns
@@ -53,17 +43,10 @@ common_packages:
   - git
   - tree
   - jq
-rpm_packages:
   - bind-utils
   - nmap-ncat
   - nmap
   - vim-enhanced
-deb_packages:
-  - bind9-dnsutils
-  - nmap
-  - nmap-common
-  - ncat
-  - vim
 pip_packages:
   - pyvim
   - pyvmomi

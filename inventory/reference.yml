@@ -1,65 +1,122 @@
-# This is the inventory file used by ansible to apply the playbooks
-# The commented objects are optional, the rest are required.
+# This is the reference inventory file used by ansible
+# for the ocp4-vsphere-ipi project
 ---
 all:
   hosts:
     localhost:
   vars:
-##### OpenShift version. The default value is 'stable' or dotted version '4.7.7' (latest)
-#    openshift_version: 'stable'
-##### Number of worker nodes
-#    workers: 2
-##### Spec for the worker nodes
-#    worker_spec:
-#      cpus: 2
-#      memoryMB: 8196
-#      diskSizeGB: 120
-##### Single node master?
-#    single_master: false
-##### Spec for the master nodes
-#    master_spec:
-#      cpus: 4
-#      memoryMB: 16384
-#      diskSizeGB: 120
-##### IP address block for pods
-#    pod_sdn_cidr: '10.128.0.0/14'
-##### IP address block for pods
-#    service_sdn_cidr: '172.30.0.0/16'
-##### Name of the cluster
-    cluster_name: <ocp4>
-##### Parent DNS domain for the cluster
-    base_domain: <example.com>
-##### IP assigned to the DNS record api.<cluster_name>.<base_domain>
-    api_ip: <'192.168.1.8'>
-##### IP assigned to the DNS record *.apps.<cluster_name>.<base_domain>
-    apps_ip: <'192.168.1.9'>
-##### IP address of the NTP server
-    ntp_ip: <'192.168.1.1'>
-##### IP address of the DNS server
-    dns_ip: <'192.168.1.1'>
-##### vCenter access details
-    vcenter_hostname: <'192.168.22.10'>
-    vcenter_username: <'administrator@vsphere.local'>
-    vcenter_datacenter: <Datacenter>
-    vcenter_cluster: <Cluster>
-    vcenter_datastore: <Datastore>
-    vcenter_network: <NetworkName>
-##### Pull Secret file
-#    pull_secret_name: '<file-name>'
-##### IP address and port of the Proxy
-#    proxy_http: '192.168.1.1:3128'
-#    no_proxy_http: 'example.com'
-#    machine_cidr: '10.0.0.0/16'
-##### For Disconnected installation
-#    local_registry_server: '<IP:Port>'
-#    local_registry_cert_name: '<certificate_file>'
-#    local_registry_repository: '<ocp4/openshift4>'
-##> Paste below the imageContentSources obtained from the 'oc adm release mirror'
-#    local_registry_sources: |
-#      imageContentSources:
-#      - mirrors:
-#        - local.registry:5000/ocp4/openshift4
-#        source: quay.io/openshift-release-dev/ocp-release
-#      - mirrors:
-#        - local.registry:5000/ocp4/openshift4
-#        source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+    # OpenShift Version
+    # Enter desired dotted version '4.7.8'
+    # The default version is 'stable'
+    openshift_version: 'stable'
+    
+    # Name of the cluster
+    # example: ocp4
+    cluster_name: {}
+    
+    # Parent DNS domain for the cluster
+    # example: mydomain.org
+    base_domain: {}
+    
+    # Pull Secret file
+    # filename within the files/ dir of this playbook
+    pull_secret_name: {}
+
+    # Number of worker nodes to create
+    # default: 2
+    workers: 2
+
+    # Resources assigned to each worker
+    # These are the defaults
+    #
+    #worker_spec:
+    #  cpus: 2
+    #  memoryMB: 8196
+    #  diskSizeGB: 120
+    
+    #  Create the cluster with a single master node
+    single_master: false
+    
+    # Resources for the master nodes
+    # These are the defaults
+    #
+    #master_spec:
+    #  cpus: 4
+    #  memoryMB: 16384
+    #  diskSizeGB: 120
+
+    # IP address block for pods
+    # This is the default
+    pod_cidr: '10.128.0.0/14'
+
+    # IP address block for pods
+    # This is the default
+    service_cidr: '172.30.0.0/16'
+
+    # IP address block of the nodes
+    # example: '10.0.0.0/16'
+    machine_cidr: {}
+
+    # IP assigned to the DNS record
+    # api.<cluster_name>.<base_domain>
+    api_ip: {}
+      
+    # IP assigned to the DNS record
+    # *.apps.<cluster_name>.<base_domain>
+    apps_ip: {}
+
+    # IP address of the NTP server
+    ntp_ip: {}
+
+    # IP address of the DNS server
+    dns_ip: {}
+
+    # Proxy details
+    # example: '192.168.1.2:3128'
+    proxy_http: {}
+
+    # A comma-separated list of destination domain names, IP addresses,
+    # or other network CIDRs to exclude from proxying. Preface a domain
+    # with `.` to match subdomains only.
+    # example: 'mydomain.com'
+    no_proxy_http: {}
+
+    # PEM-encoded X.509 certificate file name only
+    # If the proxy has a certificate signed by an authority which RHCOS
+    # does not trust by default
+    # it should exist in the files/ directory of this playbook
+    proxy_cert_bundle: {}
+
+    # vCenter Details
+    # vcenter_password should be in vault
+    vcenter_hostname: {}
+    vcenter_username: {}
+    vcenter_datacenter: {}
+    vcenter_cluster: {}
+    vcenter_datastore: {}
+    vcenter_network: {}
+
+    # DISCONNECTED
+    #
+    # IP:port
+    local_registry_server: {}
+
+    # Certificate file name only
+    # it should exist in the files/ directory of this playbook
+    local_registry_cert_name: {}
+
+    # Registry repository. Example: ocp4/openshift4
+    local_registry_repository: {}
+
+    # Paste below the imageContentSources
+    # the output obtained from the 'oc adm release mirror'
+    #
+    #local_registry_sources: |
+    #  imageContentSources:
+    #  - mirrors:
+    #    - local.registry:5000/ocp4/openshift4
+    #    source: quay.io/openshift-release-dev/ocp-release
+    #  - mirrors:
+    #    - local.registry:5000/ocp4/openshift4
+    #    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+    

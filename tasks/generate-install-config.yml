@@ -16,21 +16,21 @@
     ssh_pub_key: "{{ r_sshkey.public_key }}"
     ssh_pri_key: "{{ r_sshkey.filename }}"
 
-- name: Confirm the OpenShift release {{ openshift_release }}
+- name: Confirm the OpenShift release {{ openshift_version }}
   set_fact:
-    openshift_release: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_release + '/release.txt', validate_certs='no', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
+    openshift_version: "{{ lookup('url', 'https://mirror.openshift.com/pub/openshift-v4/clients/ocp/' + openshift_version + '/release.txt', validate_certs='no', timeout='30') | regex_search('Version:\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') |last }}"
 
-- name: Check if oc client {{ openshift_release }} is already present
+- name: Check if oc client {{ openshift_version }} is already present
   command: oc version
   register: r_oc
-  failed_when: r_oc.stdout is not search(openshift_release)
+  failed_when: r_oc.stdout is not search(openshift_version)
   ignore_errors: yes
 
 - name: Install the oc client
   block:
-  - name: Download the oc client {{ openshift_release }}
+  - name: Download the oc client {{ openshift_version }}
     get_url:
-      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/{{ openshift_client_linux }}
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_version }}/{{ openshift_client_linux }}
       dest: "{{ openshift_cluster_dir }}"
       timeout: 30
   - name: Unpack the oc client into /usr/local/bin
@@ -45,14 +45,14 @@
 - name: Check if openshift-install is already present
   command: openshift-install version
   register: r_installer
-  failed_when: r_installer.stdout is not search(openshift_release)
+  failed_when: r_installer.stdout is not search(openshift_version)
   ignore_errors: yes
 
 - name: Get the openshift-install in a connected installation
   block:
-  - name: Download the openshift-install release {{ openshift_release }}
+  - name: Download the openshift-install release {{ openshift_version }}
     get_url:
-      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_release }}/{{ openshift_install_linux }}
+      url: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{ openshift_version }}/{{ openshift_install_linux }}
       dest: "{{ openshift_cluster_dir }}"
       timeout: 30
   - name: Unpack the openshift-install into /usr/local/bin
@@ -67,11 +67,11 @@
 
 - name: Get the openshift-install in a disconnected installation
   block:
-  - name: Extract the openshift-install release {{ openshift_release }}
+  - name: Extract the openshift-install release {{ openshift_version }}
     command: >
       oc adm release extract -a {{ pull_secret_file }}
       --command=openshift-install
-      {{ local_registry_server }}/{{ local_registry_repository }}:{{ openshift_release }}-x86_64
+      {{ local_registry_server }}/{{ local_registry_repository }}:{{ openshift_version }}-x86_64
 
   - name: Move the openshift-install to /usr/local/bin
     command: mv openshift-install /usr/local/bin
