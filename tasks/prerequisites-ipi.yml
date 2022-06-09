@@ -44,22 +44,6 @@
     remote_src: yes
     validate_certs: false
 
-- name: Copy the vCenter certificates to Ubuntu system trust
-  when: ansible_facts['distribution'] == "Ubuntu"
-  become: yes
-  shell: |
-    for cert in {{ openshift_cluster_dir }}/certs/lin/*
-    do
-      cp $cert /usr/local/share/ca-certificates/${cert##*/}.crt
-    done
-
-- name: Update the Ubuntu certificates system trust
-  when: ansible_facts['distribution'] == "Ubuntu"
-  become: yes
-  command: update-ca-certificates
-  register: update_ca_result
-  changed_when: "'0 added' not in update_ca_result.stdout"
-
 - name: Copy the vCenter certificates to RHEL system trust
   when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
   become: yes
@@ -110,20 +94,6 @@
 
 - name: Import the local registry certificate
   block: 
-  - name: Copy the Local Registry Certificate to Ubuntu system trust
-    when: ansible_facts['distribution'] == "Ubuntu"
-    become: yes
-    copy:
-      src: "{{ local_registry_certificate }}"
-      dest: /usr/local/share/ca-certificates/
-
-  - name: Update the Ubuntu certificates system trust
-    when: ansible_facts['distribution'] == "Ubuntu"
-    become: yes
-    command: update-ca-certificates
-    register: update_ca_result
-    changed_when: "'0 added' not in update_ca_result.stdout"
-
   - name: Copy the Local Registry Certificate to RHEL system trust
     when: ansible_facts['distribution'] == "RedHat" or ansible_facts['distribution'] == "CentOS"
     become: yes
@@ -137,4 +107,4 @@
     command: update-ca-trust extract
     register: update_ca_result
     changed_when: "'0 added' not in update_ca_result.stdout"
-  when: local_registry_cert_name is defined
+  when: local_registry_cert_name|length > 1
