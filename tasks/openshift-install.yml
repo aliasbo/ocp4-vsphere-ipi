@@ -144,7 +144,7 @@
           managementState: Managed
           unsupportedConfigOverrides:
             useUnsupportedUnsafeNonHANonProductionUnstableOAuthServer: true
-  when: one_master
+  when: single_master
 
 - name: For close inspection of the bootstrap process run
   debug:
