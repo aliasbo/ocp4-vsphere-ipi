@@ -15,10 +15,6 @@
   wait_for:
     path: "{{ openshift_cluster_installation_dir }}/metadata.json"
 
-- name: Getting the name of the bootstrap VM using the InfraID
-  set_fact:
-    bootstrap_name: "{{ lookup('file','{{ openshift_cluster_installation_dir }}/metadata.json') | from_json | json_query('infraID') }}-bootstrap"
-
 - name: Wait for the bootstrap creation message in the install log
   wait_for:
     path: "{{ openshift_cluster_installation_dir }}/.openshift_install.log"
@@ -26,6 +22,10 @@
     delay: 10
     sleep: 2
     timeout: 900
+
+- name: Getting the name of the bootstrap VM using the InfraID
+  set_fact:
+    bootstrap_name: "{{ lookup('file','{{ openshift_cluster_installation_dir }}/metadata.json') | from_json | json_query('infraID') }}-bootstrap"
 
 - name: Confirm the VM {{ bootstrap_name }} exists
   community.vmware.vmware_vm_info:
