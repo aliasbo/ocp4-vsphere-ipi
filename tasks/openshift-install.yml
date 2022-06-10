@@ -179,6 +179,11 @@
     owner: "{{ ansible_env.USER }}"
     mode: 0775
 
+- name: Copy the kubeconfig to {{ ansible_env.HOME }}/.kube/{{ cluster_name }}.config
+  copy:
+    src: "{{ openshift_cluster_installation_dir }}/auth/kubeconfig"
+    dest: "{{ ansible_env.HOME }}/.kube/{{ cluster_name }}.config"
+
 - name: Create OpenShift Bash completion file
   become: true
   shell: oc completion bash >/etc/bash_completion.d/openshift
