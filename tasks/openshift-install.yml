@@ -144,7 +144,7 @@
           managementState: Managed
           unsupportedConfigOverrides:
             useUnsupportedUnsafeNonHANonProductionUnstableOAuthServer: true
-  when: one_master
+  when: single_master
 
 - name: For close inspection of the bootstrap process run
   debug:
@@ -178,6 +178,11 @@
     path: "{{ ansible_env.HOME }}/.kube"
     owner: "{{ ansible_env.USER }}"
     mode: 0775
+
+- name: Copy the kubeconfig to {{ ansible_env.HOME }}/.kube/{{ cluster_name }}.config
+  copy:
+    src: "{{ openshift_cluster_installation_dir }}/auth/kubeconfig"
+    dest: "{{ ansible_env.HOME }}/.kube/{{ cluster_name }}.config"
 
 - name: Create OpenShift Bash completion file
   become: true
