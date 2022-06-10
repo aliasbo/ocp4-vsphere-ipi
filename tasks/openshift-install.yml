@@ -22,16 +22,13 @@
 - name: Wait for the bootstrap creation message in the install log
   wait_for:
     path: "{{ openshift_cluster_installation_dir }}/.openshift_install.log"
-    search_regex: 'module.bootstrap.vsphere_virtual_machine.vm: Creation complete'
+    search_regex: '^.*bootstrap.*:\sCreation\scomplete'
     delay: 10
     sleep: 2
     timeout: 900
 
 - name: Confirm the VM {{ bootstrap_name }} exists
   community.vmware.vmware_vm_info:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
     vm_type: vm
   register: r_vm_info
   until: r_vm_info.virtual_machines | json_query(query)
@@ -48,9 +45,6 @@
 
 - name: Get the IP of {{ bootstrap_name }}
   community.vmware.vmware_guest_tools_wait:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
     name: "{{ bootstrap_name }}"
   register: r_vm_guest
 
