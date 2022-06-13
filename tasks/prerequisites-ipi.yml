@@ -74,11 +74,23 @@
   register: r_vcenter
   failed_when: vcenter_datastore not in (r_vcenter.datastores | json_query('[*].name'))
 
-- name: Confirm PortGroup in vCenter is {{ vcenter_network }}
-  community.vmware.vmware_portgroup_info:
-    cluster_name: '{{ vcenter_cluster }}'
-  register: r_vcenter
-  failed_when: vcenter_network not in (r_vcenter.hosts_portgroup_info | json_query('*[*].portgroup | []'))
+- name: Login into vCenter and get cookies
+  uri:
+    url: https://{{ vcenter_hostname }}/rest/com/vmware/cis/session
+    force_basic_auth: yes
+    method: POST
+    user: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+  register: login
+
+- name: Confirm network in vCenter is {{ vcenter_network }}
+  uri:
+    url: https://{{ vcenter_hostname }}/rest/vcenter/network
+    force_basic_auth: yes
+    headers:
+      Cookie: "{{ login.set_cookie }}"
+  register: vcnetworks
+  failed_when: vcenter_network not in (vcnetworks.json | json_query('*[*].name | []'))
 
 - name: Import the local registry certificate
   block: 

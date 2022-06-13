@@ -70,14 +70,20 @@ proxy:
 platform:
   vsphere:
     apiVIP: {{ api_ip }}
-    cluster: {{ vcenter_cluster }}
-    datacenter: {{ vcenter_datacenter }}
-    defaultDatastore: {{ vcenter_datastore }}
     ingressVIP: {{ apps_ip }}
-    network: {{ vcenter_network }}
-    password: {{ vcenter_password }}
-    username: {{ vcenter_username }}
     vCenter: {{ vcenter_hostname }}
+    username: {{ vcenter_username }}
+    password: {{ vcenter_password }}
+    datacenter: {{ vcenter_datacenter }}
+    cluster: {{ vcenter_cluster }}
+    defaultDatastore: {{ vcenter_datastore }}
+    network: {{ vcenter_network }}
+{% if vcenter_folder|length > 0 %}
+    folder: {{ vcenter_folder }}
+{% endif %}
+{% if vcenter_resource_pool|length > 0 %}
+    resourcePool: {{ vcenter_resource_pool }}
+{% endif %}
 publish: External
 pullSecret: '{{ lookup('file',pull_secret_file) | to_json | from_json }}'
 sshKey: |

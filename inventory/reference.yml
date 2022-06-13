@@ -96,6 +96,12 @@ all:
     vcenter_cluster: {}
     vcenter_datastore: {}
     vcenter_network: {}
+    # The absolute path of an existing folder where the installer should create VMs
+    # If no value is specified, a folder named with the cluster ID will be created
+    vcenter_folder: {}
+    # The absolute path of an existing resource pool where the installer should create VMs
+    # If no value is specified, resources will be installed in the root of the cluster
+    vcenter_resource_pool: {}
 
     # DISCONNECTED
     #
@@ -121,4 +127,3 @@ all:
     #  - mirrors:
     #    - local.registry:5000/ocp4/openshift4
     #    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
-    
